@@ -53,4 +53,16 @@ public function index() {
             exit;
         }
     }
+
+    public function dadosGraficos() {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $categoria = $_GET['categoria'] ?? '';
+        $setor = $_GET['setor'] ?? '';
+
+        $dados = $this->respostaModel->obterDadosFiltrados($categoria, $setor);
+
+        echo json_encode($dados, JSON_UNESCAPED_UNICODE);
+    }
+
 }

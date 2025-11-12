@@ -34,6 +34,11 @@ switch ($page) {
         $controller = new PesquisaController();
         $controller->salvar();
         break;
+    
+    case 'dadosGraficos':
+        
+        $controller->dadosGraficos();
+        break;
 
     default:
         http_response_code(404);

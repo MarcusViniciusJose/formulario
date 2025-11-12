@@ -73,7 +73,9 @@ document.getElementById('filtrar').addEventListener('click', () => {
     const categoria = document.getElementById('categoria').value;
     const setor = document.getElementById('setor').value;
 
-    fetch(`?action=dadosGraficos&categoria=${encodeURIComponent(categoria)}&setor=${encodeURIComponent(setor)}`)
+
+    
+    fetch(`index.php?page=rh&action=dadosGraficos&categoria=${encodeURIComponent(categoria)}&setor=${encodeURIComponent(setor)}`)
         .then(res => res.json())
         .then(dados => {
             const container = document.getElementById('areaGraficos');
