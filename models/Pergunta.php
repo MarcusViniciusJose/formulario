@@ -7,14 +7,22 @@ class Pergunta {
     public function __construct() {
         $this->conn = Database::conn();
     }
-
-    public function getAll() {
-        $stmt = $this->conn->query("
-            SELECT p.*, c.nome AS categoria_nome
+   public function getAll() {
+        $sql = "
+            SELECT 
+                p.id,
+                p.texto,
+                c.nome AS categoria_nome,
+                c.id AS categoria_id
             FROM perguntas p
-            JOIN categorias c ON p.categoria_id = c.id
+            INNER JOIN categorias c ON p.categoria_id = c.id
             ORDER BY c.id, p.id
-        ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        ";
+
+        $stmt = $this->conn->query($sql);
+        $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        
+        return $dados; 
     }
 }

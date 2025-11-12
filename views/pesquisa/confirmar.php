@@ -17,13 +17,13 @@
             $setorModel = new Setor();
             $setorData = $setorModel->listar();
             foreach ($setorData as $s) {
-                if ($s['id'] == $setor) echo htmlspecialchars($s['nome']);
+                if ($s['id'] == $setor_id) echo htmlspecialchars($s['nome']);
             }
         ?>
     </div>
 
     <form method="POST" action="?action=salvar">
-        <input type="hidden" name="setor" value="<?= htmlspecialchars($setor) ?>">
+        <input type="hidden" name="setor_id" value="<?= htmlspecialchars($setor_id) ?>">
         <?php foreach ($respostas as $codigo => $valor): ?>
             <input type="hidden" name="respostas[<?= htmlspecialchars($codigo) ?>]" value="<?= htmlspecialchars($valor) ?>">
         <?php endforeach; ?>
@@ -38,17 +38,18 @@
                     require_once __DIR__ . '/../../models/Pergunta.php';
                     $pModel = new Pergunta();
                     $todasPerguntas = $pModel->getAll();
+
                     $todasPerguntasFlat = [];
-                    foreach ($todasPerguntas as $cat => $lista) {
-                        foreach ($lista as $p) {
-                            $todasPerguntasFlat[$p['codigo']] = [
+                             foreach ($todasPerguntas as $p) { 
+                            $todasPerguntasFlat[$p['id']] = [
                                 'texto' => $p['texto'],
-                                'categoria' => $p['categoria']
+                                'categoria' => $p['categoria_nome'] 
                             ];
                         }
-                    }
+                    
 
                     foreach ($respostas as $codigo => $valor): 
+                        if (!isset($todasPerguntasFlat[$codigo])) continue; 
                         $pergunta = $todasPerguntasFlat[$codigo];
                     ?>
                     <li class="list-group-item">

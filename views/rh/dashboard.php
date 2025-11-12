@@ -12,7 +12,6 @@
 <div class="container my-5">
     <h2 class="text-center mb-4">📊 Painel RH - Pesquisa de Clima Organizacional</h2>
 
-    <!-- FILTROS -->
     <div class="card p-4 shadow-sm mb-4">
         <div class="row g-3">
             <div class="col-md-5">
@@ -64,7 +63,6 @@
         </div>
     </div>
 
-    <!-- GRÁFICOS -->
     <div id="areaGraficos" class="mt-4">
         <div class="alert alert-info text-center">Selecione filtros e clique em "Filtrar".</div>
     </div>

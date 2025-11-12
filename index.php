@@ -29,6 +29,12 @@ switch ($page) {
         }
         break;
 
+    case 'salvar':
+        require_once 'controllers/PesquisaController.php';
+        $controller = new PesquisaController();
+        $controller->salvar();
+        break;
+
     default:
         http_response_code(404);
         echo "<h2 style='text-align:center;margin-top:50px;'>Página não encontrada</h2>";

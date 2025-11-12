@@ -10,7 +10,7 @@
         <div class="card shadow-lg border-0">
             <div class="card-body">
                 <h2 class="text-center mb-4">Pesquisa de Clima Organizacional - Aerocris</h2>
-                <form method="POST" action="?page=confirmar">
+                <form method="POST" action="?page=salvar">
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Selecione seu setor:</label>

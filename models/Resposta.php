@@ -10,7 +10,7 @@ class Resposta {
 
     public function salvarResposta($id_pergunta, $valor, $setor) {
         $stmt = $this->conn->prepare("
-            INSERT INTO respostas (id_pergunta, resposta, setor, data_resposta)
+            INSERT INTO respostas (pergunta_id, resposta, setor_id, created_at)
             VALUES (:id_pergunta, :resposta, :setor, NOW())
         ");
         $stmt->bindParam(':id_pergunta', $id_pergunta);
