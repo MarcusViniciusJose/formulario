@@ -10,20 +10,34 @@ class Sugestao {
 
     public function salvar($setor_id, $texto) {
         $stmt = $this->conn->prepare("
-            INSERT INTO sugestoes (setor_id, sugestao)
-            VALUES (:setor, :sugestao)
+            INSERT INTO sugestoes (setor_id, sugestao, created_at)
+            VALUES (:setor, :sugestao, NOW())
         ");
         $stmt->bindParam(':setor', $setor_id);
         $stmt->bindParam(':sugestao', $texto);
         $stmt->execute();
     }
 
-    public function listar() {
-        $sql = "SELECT s.id, set.nome AS setor, s.sugestao, s.created_at 
-                FROM sugestoes s
-                INNER JOIN setores set ON set.id = s.setor_id
-                ORDER BY s.created_at DESC";
-        $stmt = $this->conn->query($sql);
+    public function listar($setor_id = null) {
+        $sql = "
+            SELECT s.id, st.nome AS setor, s.sugestao, s.created_at
+            FROM sugestoes s
+            INNER JOIN setores st ON st.id = s.setor_id
+        ";
+
+        if ($setor_id) {
+            $sql .= " WHERE s.setor_id = :setor_id";
+        }
+
+        $sql .= " ORDER BY s.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if ($setor_id) {
+            $stmt->bindParam(':setor_id', $setor_id, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -17,12 +17,5 @@ class RHController {
         echo json_encode($dados, JSON_UNESCAPED_UNICODE);
     }
 
-    public function carregarSugestoes() {
-    require_once __DIR__ . '/../models/Sugestao.php';
-    $model = new Sugestao();
-    $sugestoes = $model->listar(); 
-
-    header('Content-Type: application/json');
-    echo json_encode($sugestoes);
-}
+    
 }

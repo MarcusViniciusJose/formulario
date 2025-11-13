@@ -27,6 +27,12 @@ switch ($page) {
             case 'dadosGraficos':
                 $controller->dadosGraficos();
                 break;
+            case 'sugestoes':
+                require_once 'controllers/SugestaoController.php';
+                $controller = new SugestaoController();
+                $controller->index();
+                break;
+
             default:
                 $controller->index();
                 break;
@@ -34,18 +40,41 @@ switch ($page) {
         break;
 
     case 'rh':
-        require_once 'controllers/RHController.php';
-        $controller = new RHController();
+    require_once 'controllers/RHController.php';
+    $controller = new RHController();
+
+    switch ($action) {
+        case 'dadosGraficos':
+            $controller->dadosGraficos();
+            break;
+        case 'sugestoes':
+            require_once 'controllers/SugestaoController.php';
+            $controller = new SugestaoController();
+            $controller->index();
+            break;
+        default:
+            $controller->index();
+            break;
+    }
+    break;
+
+    case 'sugestoes':
+        require_once 'controllers/SugestaoController.php';
+        $controller = new SugestaoController();
 
         switch ($action) {
-            case 'dadosGraficos':
-                $controller->dadosGraficos();
+            case 'index':
+                $controller->index();
+                break;
+            case 'filtrar':
+                $controller->filtrar();
                 break;
             default:
                 $controller->index();
                 break;
         }
-        break;
+    break;
+
 
     default:
         http_response_code(404);

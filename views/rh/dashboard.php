@@ -298,6 +298,13 @@
         <div class="alert alert-info text-center">Selecione os filtros e clique em "Filtrar".</div>
     </div>
 
+    <div class="text-center mt-4 mb-5">
+        <a href="index.php?page=pesquisa&action=sugestoes" class="btn btn-success px-4 py-2 fw-semibold shadow-sm">
+            💡 Ver sugestões de melhorias
+        </a>
+
+    </div>
+
 
 </div>
 
