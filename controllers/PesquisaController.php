@@ -34,34 +34,43 @@ class PesquisaController {
         include __DIR__ . '/../views/pesquisa/index.php';
     }
 
-    public function confirmar() {
-        if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
-            header('Location: ?page=pesquisa&erro=missing');
-            exit;
-        }
-
-        $setor_id = $_POST['setor_id'];
-        $respostas = $_POST['respostas'];
-
-        include __DIR__ . '/../views/pesquisa/confirmar.php';
-    }
-
-    public function salvar() {
-        if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
-            header('Location: ?page=pesquisa&erro=missing');
-            exit;
-        }
-
-        $setor_id = $_POST['setor_id'];
-        $respostas = $_POST['respostas'];
-
-        foreach ($respostas as $pergunta_id => $resposta) {
-            $this->respostaModel->salvarResposta($pergunta_id, $resposta, $setor_id);
-        }
-
-        header('Location: ?page=pesquisa&sucesso=1');
+public function confirmar() {
+    if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
+        header('Location: ?page=pesquisa&erro=missing');
         exit;
     }
+
+    $setor_id = $_POST['setor_id'];
+    $respostas = $_POST['respostas'];
+    $sugestao = $_POST['sugestao'] ?? ''; 
+    include __DIR__ . '/../views/pesquisa/confirmar.php';
+}
+
+public function salvar() {
+    if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
+        header('Location: ?page=pesquisa&erro=missing');
+        exit;
+    }
+
+    $setor_id = $_POST['setor_id'];
+    $respostas = $_POST['respostas'];
+    $sugestao = trim($_POST['sugestao'] ?? '');
+
+    foreach ($respostas as $pergunta_id => $resposta) {
+        $this->respostaModel->salvarResposta($pergunta_id, $resposta, $setor_id);
+    }
+
+    if ($sugestao !== '') {
+        require_once __DIR__ . '/../models/Sugestao.php';
+        $sugModel = new Sugestao();
+        $sugModel->salvar($setor_id, $sugestao);
+    }
+
+    header('Location: ?page=pesquisa&action=sucesso');
+    
+    exit;
+}
+
 
    
     public function dadosGraficos() {

@@ -110,13 +110,6 @@
 
     <div class="container">
 
-        <?php if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1): ?>
-            <div class="alert alert-success text-center shadow-sm mb-4">
-                ✅ <strong>Sucesso!</strong> Suas respostas foram registradas com sucesso.<br>
-                Obrigado por participar da pesquisa! 💬
-            </div>
-        <?php endif; ?>
-
         <div class="card shadow-lg p-4">
             <h2 class="section-title">Pesquisa de Clima Organizacional - Aerocris</h2>
 
@@ -168,6 +161,22 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <div class="card my-4 border-0">
+                    <div class="card-header  text-white text-center">
+                        Sugestões de Melhorias
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="sugestao" class="form-label fw-bold">
+                                Gostaria de deixar alguma sugestão para melhorar o ambiente, os processos ou a comunicação na Aerocris?
+                            </label>
+                            <textarea name="sugestao" id="sugestao" class="form-control shadow-sm" rows="4" 
+                                placeholder="Escreva aqui sua sugestão..." style="border-radius:10px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
 
                 <button type="submit" class="btn btn-success mt-3">Enviar Respostas</button>
 

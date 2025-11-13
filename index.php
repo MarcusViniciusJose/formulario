@@ -21,6 +21,9 @@ switch ($page) {
             case 'salvar':
                 $controller->salvar();
                 break;
+            case 'sucesso': 
+                include __DIR__ . '/views/pesquisa/sucesso.php';
+                break;
             case 'dadosGraficos':
                 $controller->dadosGraficos();
                 break;
