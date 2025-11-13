@@ -11,10 +11,22 @@ switch ($page) {
         require_once 'controllers/PesquisaController.php';
         $controller = new PesquisaController();
 
-        if ($action === 'salvar') {
-            $controller->salvar();
-        } else {
-            $controller->index();
+        switch ($action) {
+            case 'index':
+                $controller->index();
+                break;
+            case 'confirmar':
+                $controller->confirmar();
+                break;
+            case 'salvar':
+                $controller->salvar();
+                break;
+            case 'dadosGraficos':
+                $controller->dadosGraficos();
+                break;
+            default:
+                $controller->index();
+                break;
         }
         break;
 
@@ -22,22 +34,14 @@ switch ($page) {
         require_once 'controllers/RHController.php';
         $controller = new RHController();
 
-        if ($action === 'dadosGraficos') {
-            $controller->dadosGraficos();
-        } else {
-            $controller->index();
+        switch ($action) {
+            case 'dadosGraficos':
+                $controller->dadosGraficos();
+                break;
+            default:
+                $controller->index();
+                break;
         }
-        break;
-
-    case 'salvar':
-        require_once 'controllers/PesquisaController.php';
-        $controller = new PesquisaController();
-        $controller->salvar();
-        break;
-    
-    case 'dadosGraficos':
-        
-        $controller->dadosGraficos();
         break;
 
     default:

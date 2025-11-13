@@ -18,42 +18,52 @@ class PesquisaController {
         $this->modelSetor = new Setor();
     }
 
-public function index() {
-    $categorias = $this->categoriaModel->getAll();
+  
+    public function index() {
+        $categorias = $this->categoriaModel->getAll();
+        $perguntas_flat = $this->perguntaModel->getAll();
 
-    $perguntas_flat = $this->perguntaModel->getAll();
+        $perguntas = [];
+        foreach ($perguntas_flat as $p) {
+            $id_cat = $p['categoria_id'];
+            $perguntas[$id_cat][] = $p;
+        }
 
-    $perguntas = [];
-    foreach ($perguntas_flat as $p) {
-        $id_cat = $p['categoria_id'];
-        $perguntas[$id_cat][] = $p;
+        $setores = $this->modelSetor->listar();
+
+        include __DIR__ . '/../views/pesquisa/index.php';
     }
 
-    $setores = $this->modelSetor->listar();
-
-    include __DIR__ . '/../views/pesquisa/index.php';
-}
-
-
-    public function salvar() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['respostas'])) {
-            $respostas = $_POST['respostas'];
-            
-            $setor_id = isset($_POST['setor_id']) && is_numeric($_POST['setor_id'])
-                ? (int)$_POST['setor_id']
-                : null; 
-
-            foreach ($respostas as $id_pergunta => $valor) {
-                 $this->respostaModel->salvarResposta($id_pergunta, $valor, $setor_id);
-            }
-
-            include __DIR__ . '/../views/pesquisa/confirmar.php';
-        } else {
-            header("Location: index.php?page=pesquisa");
+    public function confirmar() {
+        if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
+            header('Location: ?page=pesquisa&erro=missing');
             exit;
         }
+
+        $setor_id = $_POST['setor_id'];
+        $respostas = $_POST['respostas'];
+
+        include __DIR__ . '/../views/pesquisa/confirmar.php';
     }
 
+    public function salvar() {
+        if (!isset($_POST['setor_id']) || !isset($_POST['respostas'])) {
+            header('Location: ?page=pesquisa&erro=missing');
+            exit;
+        }
+
+        $setor_id = $_POST['setor_id'];
+        $respostas = $_POST['respostas'];
+
+        foreach ($respostas as $pergunta_id => $resposta) {
+            $this->respostaModel->salvarResposta($pergunta_id, $resposta, $setor_id);
+        }
+
+        header('Location: ?page=pesquisa&sucesso=1');
+        exit;
+    }
+
+   
     public function dadosGraficos() {
         header('Content-Type: application/json; charset=utf-8');
 
@@ -64,5 +74,4 @@ public function index() {
 
         echo json_encode($dados, JSON_UNESCAPED_UNICODE);
     }
-
 }
