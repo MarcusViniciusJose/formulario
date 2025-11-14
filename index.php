@@ -52,9 +52,15 @@ switch ($page) {
             $controller = new SugestaoController();
             $controller->index();
             break;
+        case 'insatisfeitas':
+            require_once 'controllers/RHController.php';
+            $controller = new RHController();
+            $controller->insatisfeitas();
+            break;    
         default:
             $controller->index();
             break;
+
     }
     break;
 
@@ -74,6 +80,7 @@ switch ($page) {
                 break;
         }
     break;
+
 
 
     default:

@@ -121,119 +121,6 @@
             font-size: 1.2rem;
             font-weight: 700;
         }
-
-        @media (min-width: 576px) {
-            .container {
-                padding: 16px;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
-
-            .chart-title {
-                font-size: 1rem;
-            }
-
-            .chart-wrapper {
-                max-width: 650px;
-                height: 100%;
-            }
-
-            .chart-wrapper-bar {
-                height: 100%;
-            }
-        }
-
-        @media (min-width: 768px) {
-            body {
-                font-size: 15px;
-            }
-
-            .container {
-                padding: 24px;
-            }
-
-            .page-title {
-                font-size: 1.75rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .filter-card {
-                padding: 20px;
-            }
-
-            .chart-card {
-                padding: 20px;
-                height: 100%;
-            }
-
-            .chart-wrapper {
-                max-width: 700px;
-                height: 100%;
-            }
-
-            .chart-wrapper-bar {
-                height: 600px;
-                height: 100%;
-            }
-
-            .btn-primary {
-                width: auto;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .container {
-                max-width: 1140px;
-                padding: 32px 24px;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .chart-wrapper {
-                max-width: 750px;
-                height: 100%;
-            }
-
-            .chart-wrapper-bar {
-                max-width: 1000px;
-                height: 100%;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1320px;
-            }
-
-            .chart-wrapper {
-                max-width: 800px;
-                height: 100%;
-            }
-
-            .chart-wrapper-bar {
-                max-width: 1100px;
-                height: 100%;
-            }
-        }
-
-        .form-select:focus,
-        .btn:focus {
-            outline: 2px solid #0d6efd;
-            outline-offset: 2px;
-        }
-
-        .chart-card, .filter-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .chart-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
     </style>
 </head>
 
@@ -282,13 +169,19 @@
         <div class="alert alert-info text-center">Selecione os filtros e clique em "Filtrar".</div>
     </div>
 
-    <div class="text-center mt-4 mb-5">
-        <a href="index.php?page=pesquisa&action=sugestoes" class="btn btn-success px-4 py-2 fw-semibold shadow-sm">
+    <div class="text-center mt-4 mb-5 d-flex flex-column gap-3">
+
+        <a href="index.php?page=pesquisa&action=sugestoes" 
+           class="btn btn-success px-4 py-2 fw-semibold shadow-sm">
             💡 Ver sugestões de melhorias
         </a>
 
-    </div>
+        <a href="index.php?page=rh&action=insatisfeitas" 
+           class="btn btn-danger px-4 py-2 fw-semibold shadow-sm">
+            😕 Ver painel de insatisfação
+        </a>
 
+    </div>
 
 </div>
 
@@ -394,151 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 100);
                 });
                 
-
-                let totaisGerais = {};
-
-                dados.forEach(item => {
-                    Object.entries(item.respostas).forEach(([opcao, qtd]) => {
-                        if (qtd > 0) {
-                            totaisGerais[opcao] = (totaisGerais[opcao] || 0) + qtd;
-                        }
-                    });
-                });
-
-                const totalGeral = Object.values(totaisGerais).reduce((a, b) => a + b, 0);
-
-                
-
-
-                if (totalGeral > 0) {
-
-                const concordoTotal = 
-                    (totaisGerais["Concordo Totalmente"] || 0) +
-                    (totaisGerais["Concordo Parcialmente"] || 0);
-
-                const discordoTotal = 
-                    (totaisGerais["Discordo Totalmente"] || 0) +
-                    (totaisGerais["Discordo Parcialmente"] || 0);
-
-                const pctConcordo = totalGeral > 0 ? ((concordoTotal / totalGeral) * 100).toFixed(1) : 0;
-                const pctDiscordo = totalGeral > 0 ? ((discordoTotal / totalGeral) * 100).toFixed(1) : 0;
-                    const cardGeral = document.createElement('div');
-                    cardGeral.className = 'card chart-card geral-card shadow-lg border-0';
-
-                    cardGeral.innerHTML = `
-                        <h5 class="chart-title text-center mb-3">
-                            📈 Resultado Geral da Pesquisa
-                        </h5>
-
-                        <p class="text-center text-black-50 mb-3 small">
-                            Total de ${totalGeral} respostas coletadas — 
-                            👍 Nível de satisfação: <b>${pctConcordo}%</b> | 
-                            👎 Nível de insatisfação: <b>${pctDiscordo}%</b>
-                        </p>
-
-                        <div class="chart-wrapper-bar">
-                            <canvas id="graficoGeral"></canvas>
-                        </div>
-                    `;
-
-                    areaGraficos.appendChild(cardGeral);
-
-                    setTimeout(() => {
-                        const ctxGeral = document.getElementById('graficoGeral');
-
-                        const ordenado = Object.entries(totaisGerais)
-                            .sort(([,a], [,b]) => b - a);
-                        
-                        const labels = ordenado.map(([label]) => label);
-                        const values = ordenado.map(([, value]) => value);
-
-                        new Chart(ctxGeral, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Quantidade de Respostas',
-                                    data: values,
-                                    backgroundColor: [
-                                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
-                                        '#9966FF', '#FF6384', '#C9CBCF'
-                                    ],
-                                    borderColor: [
-                                         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
-                                        '#9966FF', '#FF6384', '#C9CBCF'
-                                    ],
-                                    borderWidth: 2,
-                                    borderRadius: 8,
-                                    borderSkipped: false
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: true,
-                                aspectRatio: 2,
-                                indexAxis: 'y',
-                                plugins: {
-                                    legend: { 
-                                        display: false
-                                    },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                        padding: 12,
-                                        titleFont: { size: 14, weight: 'bold' },
-                                        bodyFont: { size: 13 },
-                                        callbacks: {
-                                            label: function(ctx) {
-                                                const qtd = ctx.parsed.x;
-                                                const pct = ((qtd / totalGeral) * 100).toFixed(1);
-                                                return `${qtd} respostas (${pct}%)`;
-                                            }
-                                        }
-                                    },
-                                    datalabels: {
-                                        anchor: 'end',
-                                        align: 'end',
-                                        color: '#000',
-                                        formatter: (value) => {
-                                            const pct = ((value / totalGeral) * 100).toFixed(1);
-                                            return value > 0 ? `${value} (${pct}%)` : '';
-                                        },
-                                        font: {
-                                            weight: 'bold',
-                                            size: window.innerWidth < 576 ? 11 : 13
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        beginAtZero: true,
-                                        ticks: { 
-                                            stepSize: 1,
-                                            color: '#000',
-                                            font: { size: 12 }
-                                        },
-                                        grid: {
-                                            color: 'rgba(255, 255, 255, 0.1)'
-                                        }
-                                    },
-                                    y: {
-                                        ticks: {
-                                            color: '#000',
-                                            font: { 
-                                                size: window.innerWidth < 576 ? 10 : 12,
-                                                weight: '500'
-                                            }
-                                        },
-                                        grid: {
-                                            display: false
-                                        }
-                                    }
-                                }
-                            },
-                            plugins: [ChartDataLabels]
-                        });
-                    }, 200);
-                }
-
             })
             .catch(err => {
                 console.error('Erro ao carregar os dados:', err);
@@ -547,11 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
-            
-           
-
-
-
 </script>
+
 </body>
 </html>
