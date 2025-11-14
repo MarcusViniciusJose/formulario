@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h5 class="chart-title text-center mb-3">
                             📈 Resultado Geral da Pesquisa
                         </h5>
-                        <p class="text-center text-white-50 mb-3 small">
+                        <p class="text-center text-black-50 mb-3 small">
                             Total de ${totalGeral} respostas coletadas
                         </p>
                         <div class="chart-wrapper-bar">
