@@ -551,21 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
            
 
 
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        Chart.instances.forEach(chart => {
-            if (chart.options.plugins.legend) {
-                chart.options.plugins.legend.labels.font.size = window.innerWidth < 576 ? 10 : 12;
-            }
-            if (chart.options.plugins.datalabels) {
-                chart.options.plugins.datalabels.font.size = window.innerWidth < 576 ? 10 : 12;
-            }
-            chart.update();
-        });
-    }, 250);
-});
+
 </script>
 </body>
 </html>
