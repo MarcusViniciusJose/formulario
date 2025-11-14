@@ -286,6 +286,151 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }, 100);
                 });
+
+                let totaisGerais = {};
+
+                dados.forEach(item => {
+                    Object.entries(item.respostas).forEach(([opcao, qtd]) => {
+                        if (qtd > 0) {
+                            totaisGerais[opcao] = (totaisGerais[opcao] || 0) + qtd;
+                        }
+                    });
+                });
+
+                const totalGeral = Object.values(totaisGerais).reduce((a, b) => a + b, 0);
+
+                
+
+
+                if (totalGeral > 0) {
+
+                const concordoTotal = 
+                    (totaisGerais["Concordo Totalmente"] || 0) +
+                    (totaisGerais["Concordo Parcialmente"] || 0);
+
+                const discordoTotal = 
+                    (totaisGerais["Discordo Totalmente"] || 0) +
+                    (totaisGerais["Discordo Parcialmente"] || 0);
+
+                const pctConcordo = totalGeral > 0 ? ((concordoTotal / totalGeral) * 100).toFixed(1) : 0;
+                const pctDiscordo = totalGeral > 0 ? ((discordoTotal / totalGeral) * 100).toFixed(1) : 0;
+                    const cardGeral = document.createElement('div');
+                    cardGeral.className = 'card chart-card geral-card shadow-lg border-0';
+
+                    cardGeral.innerHTML = `
+                        <h5 class="chart-title text-center mb-3">
+                            📈 Resultado Geral da Pesquisa
+                        </h5>
+
+                        <p class="text-center text-black-50 mb-3 small">
+                            Total de ${totalGeral} respostas coletadas — 
+                            👍 Nível de satisfação: <b>${pctConcordo}%</b> | 
+                            👎 Nível de insatisfação: <b>${pctDiscordo}%</b>
+                        </p>
+
+                        <div class="chart-wrapper-bar">
+                            <canvas id="graficoGeral"></canvas>
+                        </div>
+                    `;
+
+                    areaGraficos.appendChild(cardGeral);
+
+                    setTimeout(() => {
+                        const ctxGeral = document.getElementById('graficoGeral');
+
+                        const ordenado = Object.entries(totaisGerais)
+                            .sort(([,a], [,b]) => b - a);
+                        
+                        const labels = ordenado.map(([label]) => label);
+                        const values = ordenado.map(([, value]) => value);
+
+                        new Chart(ctxGeral, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Quantidade de Respostas',
+                                    data: values,
+                                    backgroundColor: [
+                                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
+                                        '#9966FF', '#FF6384', '#C9CBCF'
+                                    ],
+                                    borderColor: [
+                                         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
+                                        '#9966FF', '#FF6384', '#C9CBCF'
+                                    ],
+                                    borderWidth: 2,
+                                    borderRadius: 8,
+                                    borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                aspectRatio: 2,
+                                indexAxis: 'y',
+                                plugins: {
+                                    legend: { 
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        padding: 12,
+                                        titleFont: { size: 14, weight: 'bold' },
+                                        bodyFont: { size: 13 },
+                                        callbacks: {
+                                            label: function(ctx) {
+                                                const qtd = ctx.parsed.x;
+                                                const pct = ((qtd / totalGeral) * 100).toFixed(1);
+                                                return `${qtd} respostas (${pct}%)`;
+                                            }
+                                        }
+                                    },
+                                    datalabels: {
+                                        anchor: 'end',
+                                        align: 'end',
+                                        color: '#000',
+                                        formatter: (value) => {
+                                            const pct = ((value / totalGeral) * 100).toFixed(1);
+                                            return value > 0 ? `${value} (${pct}%)` : '';
+                                        },
+                                        font: {
+                                            weight: 'bold',
+                                            size: window.innerWidth < 576 ? 11 : 13
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        beginAtZero: true,
+                                        ticks: { 
+                                            stepSize: 1,
+                                            color: '#000',
+                                            font: { size: 12 }
+                                        },
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        }
+                                    },
+                                    y: {
+                                        ticks: {
+                                            color: '#000',
+                                            font: { 
+                                                size: window.innerWidth < 576 ? 10 : 12,
+                                                weight: '500'
+                                            }
+                                        },
+                                        grid: {
+                                            display: false
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: [ChartDataLabels]
+                        });
+                    }, 200);
+                }
+
                 
             })
             .catch(err => {
