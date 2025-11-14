@@ -64,12 +64,13 @@
             padding: 16px;
             margin-bottom: 1rem;
             background: white;
+            height: 100%;
         }
 
         .chart-title {
             font-size: 0.95rem;
             line-height: 1.4;
-            margin-bottom: 1rem;
+            margin-bottom: 50px;
             font-weight: 600;
             color: #333;
         }
@@ -78,7 +79,7 @@
             position: relative;
             width: 100%;
             max-width: 600px;
-            height: 450px;
+            height: 100%;
             margin: 0 auto;
         }
 
@@ -86,7 +87,7 @@
             position: relative;
             width: 100%;
             max-width: 900px;
-            height: 500px;
+            height: 100%;
             margin: 0 auto;
         }
 
@@ -136,11 +137,11 @@
 
             .chart-wrapper {
                 max-width: 650px;
-                height: 500px;
+                height: 100%;
             }
 
             .chart-wrapper-bar {
-                height: 550px;
+                height: 100%;
             }
         }
 
@@ -164,15 +165,17 @@
 
             .chart-card {
                 padding: 20px;
+                height: 100%;
             }
 
             .chart-wrapper {
                 max-width: 700px;
-                height: 550px;
+                height: 100%;
             }
 
             .chart-wrapper-bar {
                 height: 600px;
+                height: 100%;
             }
 
             .btn-primary {
@@ -192,12 +195,12 @@
 
             .chart-wrapper {
                 max-width: 750px;
-                height: 600px;
+                height: 100%;
             }
 
             .chart-wrapper-bar {
                 max-width: 1000px;
-                height: 650px;
+                height: 100%;
             }
         }
 
@@ -208,12 +211,12 @@
 
             .chart-wrapper {
                 max-width: 800px;
-                height: 650px;
+                height: 100%;
             }
 
             .chart-wrapper-bar {
                 max-width: 1100px;
-                height: 700px;
+                height: 100%;
             }
         }
 
@@ -354,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: true,
-                                aspectRatio: 0,
+                                aspectRatio: 2,
                                 plugins: {
                                     legend: {
                                         position: 'bottom',
@@ -404,7 +407,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const totalGeral = Object.values(totaisGerais).reduce((a, b) => a + b, 0);
 
+                
+
+
                 if (totalGeral > 0) {
+
+                const concordoTotal = 
+                    (totaisGerais["Concordo Totalmente"] || 0) +
+                    (totaisGerais["Concordo Parcialmente"] || 0);
+
+                const discordoTotal = 
+                    (totaisGerais["Discordo Totalmente"] || 0) +
+                    (totaisGerais["Discordo Parcialmente"] || 0);
+
+                const pctConcordo = totalGeral > 0 ? ((concordoTotal / totalGeral) * 100).toFixed(1) : 0;
+                const pctDiscordo = totalGeral > 0 ? ((discordoTotal / totalGeral) * 100).toFixed(1) : 0;
                     const cardGeral = document.createElement('div');
                     cardGeral.className = 'card chart-card geral-card shadow-lg border-0';
 
@@ -412,9 +429,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h5 class="chart-title text-center mb-3">
                             📈 Resultado Geral da Pesquisa
                         </h5>
+
                         <p class="text-center text-black-50 mb-3 small">
-                            Total de ${totalGeral} respostas coletadas
+                            Total de ${totalGeral} respostas coletadas — 
+                            👍 Nível de satisfação: <b>${pctConcordo}%</b> | 
+                            👎 Nível de insatisfação: <b>${pctDiscordo}%</b>
                         </p>
+
                         <div class="chart-wrapper-bar">
                             <canvas id="graficoGeral"></canvas>
                         </div>
@@ -439,24 +460,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                     label: 'Quantidade de Respostas',
                                     data: values,
                                     backgroundColor: [
-                                        'rgba(255, 99, 132, 0.8)',
-                                        'rgba(54, 162, 235, 0.8)',
-                                        'rgba(255, 206, 86, 0.8)',
-                                        'rgba(75, 192, 192, 0.8)',
-                                        'rgba(153, 102, 255, 0.8)',
-                                        'rgba(255, 159, 64, 0.8)',
-                                        'rgba(139, 92, 246, 0.8)',
-                                        'rgba(236, 72, 153, 0.8)'
+                                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
+                                        '#9966FF', '#FF6384', '#C9CBCF'
                                     ],
                                     borderColor: [
-                                        'rgb(255, 99, 132)',
-                                        'rgb(54, 162, 235)',
-                                        'rgb(255, 206, 86)',
-                                        'rgb(75, 192, 192)',
-                                        'rgb(153, 102, 255)',
-                                        'rgb(255, 159, 64)',
-                                        'rgb(139, 92, 246)',
-                                        'rgb(236, 72, 153)'
+                                         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40',
+                                        '#9966FF', '#FF6384', '#C9CBCF'
                                     ],
                                     borderWidth: 2,
                                     borderRadius: 8,
@@ -465,7 +474,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             },
                             options: {
                                 responsive: true,
-                                maintainAspectRatio: false,
+                                maintainAspectRatio: true,
+                                aspectRatio: 2,
                                 indexAxis: 'y',
                                 plugins: {
                                     legend: { 
