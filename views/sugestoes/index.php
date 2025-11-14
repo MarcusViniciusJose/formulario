@@ -47,7 +47,7 @@
     <?php endif; ?>
 
     <div class="text-center mt-4">
-        <a href="?page=pesquisa" class="btn btn-secondary">Voltar à pesquisa</a>
+        <a href="?page=rh" class="btn btn-secondary">Voltar ao dashboard</a>
     </div>
 </div>
 </body>

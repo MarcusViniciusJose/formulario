@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
-    <style>
+   <style>
         * {
             box-sizing: border-box;
         }
@@ -24,7 +24,6 @@
         .container {
             padding: 12px;
             max-width: 100%;
-            
         }
 
         .page-title {
@@ -32,7 +31,6 @@
             line-height: 1.4;
             margin-bottom: 1rem;
             padding: 0 8px;
-            
         }
 
         .filter-card {
@@ -79,58 +77,22 @@
         .chart-wrapper {
             position: relative;
             width: 100%;
-            max-width: 500px;
-            height: 400px;
+            max-width: 600px;
+            height: 450px;
             margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        }
+
+        .chart-wrapper-bar {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto;
         }
 
         canvas {
             max-width: 100% !important;
             height: auto !important;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .suggestions-section {
-            margin-top: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            padding: 0 8px;
-        }
-
-        .suggestion-card {
-            border-left: 4px solid #28a745;
-            background: white;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-
-        .suggestion-setor {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .suggestion-text {
-            font-size: 0.875rem;
-            line-height: 1.5;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .suggestion-date {
-            font-size: 0.7rem;
-            color: #999;
-            text-align: right;
         }
 
         .alert {
@@ -147,6 +109,18 @@
             font-size: 0.875rem;
         }
 
+        .geral-card {
+            color: black;
+            margin-top: 2rem;
+            border: none !important;
+        }
+
+        .geral-card .chart-title {
+            color: black;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
         @media (min-width: 576px) {
             .container {
                 padding: 16px;
@@ -160,13 +134,13 @@
                 font-size: 1rem;
             }
 
-            .section-title {
-                font-size: 1.25rem;
+            .chart-wrapper {
+                max-width: 650px;
+                height: 500px;
             }
 
-            .chart-wrapper {
-                max-width: 450px;
-                max-height: 350px;
+            .chart-wrapper-bar {
+                height: 550px;
             }
         }
 
@@ -193,12 +167,12 @@
             }
 
             .chart-wrapper {
-                max-width: 500px;
-                max-height: 400px;
+                max-width: 700px;
+                height: 550px;
             }
 
-            .suggestion-card {
-                padding: 16px;
+            .chart-wrapper-bar {
+                height: 600px;
             }
 
             .btn-primary {
@@ -217,22 +191,29 @@
             }
 
             .chart-wrapper {
-                max-width: 550px;
-                max-height: 450px;
+                max-width: 750px;
+                height: 600px;
             }
 
-            .section-title {
-                font-size: 1.5rem;
+            .chart-wrapper-bar {
+                max-width: 1000px;
+                height: 650px;
             }
         }
+
         @media (min-width: 1200px) {
             .container {
                 max-width: 1320px;
             }
 
             .chart-wrapper {
-                max-width: 600px;
-                max-height: 500px;
+                max-width: 800px;
+                height: 650px;
+            }
+
+            .chart-wrapper-bar {
+                max-width: 1100px;
+                height: 700px;
             }
         }
 
@@ -242,11 +223,11 @@
             outline-offset: 2px;
         }
 
-        .chart-card, .suggestion-card, .filter-card {
+        .chart-card, .filter-card {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .chart-card:hover, .suggestion-card:hover {
+        .chart-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
@@ -289,7 +270,7 @@
             </div>
 
             <div class="col-12 col-lg-2 d-flex align-items-end">
-                <button id="filtrar" class="btn btn-primary">Filtrar</button>
+                <button id="filtrar" class="btn btn-primary w-100">Filtrar</button>
             </div>
         </div>
     </div>
@@ -310,8 +291,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-    carregarSugestoes();
 
     document.getElementById('filtrar').addEventListener('click', () => {
         const categoria = document.getElementById('categoria').value;
@@ -381,10 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         position: 'bottom',
                                         labels: {
                                             boxWidth: 12,
-                                            padding: 10,
-                                            font: { 
-                                                size: window.innerWidth < 576 ? 10 : 12 
-                                            }
+                                            padding: 15,
                                         }
                                     },
                                     tooltip: {
@@ -414,6 +390,145 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }, 100);
                 });
+                
+
+                let totaisGerais = {};
+
+                dados.forEach(item => {
+                    Object.entries(item.respostas).forEach(([opcao, qtd]) => {
+                        if (qtd > 0) {
+                            totaisGerais[opcao] = (totaisGerais[opcao] || 0) + qtd;
+                        }
+                    });
+                });
+
+                const totalGeral = Object.values(totaisGerais).reduce((a, b) => a + b, 0);
+
+                if (totalGeral > 0) {
+                    const cardGeral = document.createElement('div');
+                    cardGeral.className = 'card chart-card geral-card shadow-lg border-0';
+
+                    cardGeral.innerHTML = `
+                        <h5 class="chart-title text-center mb-3">
+                            📈 Resultado Geral da Pesquisa
+                        </h5>
+                        <p class="text-center text-white-50 mb-3 small">
+                            Total de ${totalGeral} respostas coletadas
+                        </p>
+                        <div class="chart-wrapper-bar">
+                            <canvas id="graficoGeral"></canvas>
+                        </div>
+                    `;
+
+                    areaGraficos.appendChild(cardGeral);
+
+                    setTimeout(() => {
+                        const ctxGeral = document.getElementById('graficoGeral');
+
+                        const ordenado = Object.entries(totaisGerais)
+                            .sort(([,a], [,b]) => b - a);
+                        
+                        const labels = ordenado.map(([label]) => label);
+                        const values = ordenado.map(([, value]) => value);
+
+                        new Chart(ctxGeral, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Quantidade de Respostas',
+                                    data: values,
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.8)',
+                                        'rgba(54, 162, 235, 0.8)',
+                                        'rgba(255, 206, 86, 0.8)',
+                                        'rgba(75, 192, 192, 0.8)',
+                                        'rgba(153, 102, 255, 0.8)',
+                                        'rgba(255, 159, 64, 0.8)',
+                                        'rgba(139, 92, 246, 0.8)',
+                                        'rgba(236, 72, 153, 0.8)'
+                                    ],
+                                    borderColor: [
+                                        'rgb(255, 99, 132)',
+                                        'rgb(54, 162, 235)',
+                                        'rgb(255, 206, 86)',
+                                        'rgb(75, 192, 192)',
+                                        'rgb(153, 102, 255)',
+                                        'rgb(255, 159, 64)',
+                                        'rgb(139, 92, 246)',
+                                        'rgb(236, 72, 153)'
+                                    ],
+                                    borderWidth: 2,
+                                    borderRadius: 8,
+                                    borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                indexAxis: 'y',
+                                plugins: {
+                                    legend: { 
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        padding: 12,
+                                        titleFont: { size: 14, weight: 'bold' },
+                                        bodyFont: { size: 13 },
+                                        callbacks: {
+                                            label: function(ctx) {
+                                                const qtd = ctx.parsed.x;
+                                                const pct = ((qtd / totalGeral) * 100).toFixed(1);
+                                                return `${qtd} respostas (${pct}%)`;
+                                            }
+                                        }
+                                    },
+                                    datalabels: {
+                                        anchor: 'end',
+                                        align: 'end',
+                                        color: '#000',
+                                        formatter: (value) => {
+                                            const pct = ((value / totalGeral) * 100).toFixed(1);
+                                            return value > 0 ? `${value} (${pct}%)` : '';
+                                        },
+                                        font: {
+                                            weight: 'bold',
+                                            size: window.innerWidth < 576 ? 11 : 13
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        beginAtZero: true,
+                                        ticks: { 
+                                            stepSize: 1,
+                                            color: '#000',
+                                            font: { size: 12 }
+                                        },
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.1)'
+                                        }
+                                    },
+                                    y: {
+                                        ticks: {
+                                            color: '#000',
+                                            font: { 
+                                                size: window.innerWidth < 576 ? 10 : 12,
+                                                weight: '500'
+                                            }
+                                        },
+                                        grid: {
+                                            display: false
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: [ChartDataLabels]
+                        });
+                    }, 200);
+                }
+
             })
             .catch(err => {
                 console.error('Erro ao carregar os dados:', err);
@@ -422,40 +537,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+            
+           
 
-function carregarSugestoes() {
-    const container = document.getElementById('listaSugestoes');
-    
-    fetch('index.php?page=rh&action=carregarSugestoes')
-        .then(res => {
-            if (!res.ok) throw new Error('Erro na resposta do servidor');
-            return res.json();
-        })
-        .then(sugestoes => {
-            container.innerHTML = '';
-
-            if (!sugestoes || sugestoes.length === 0) {
-                container.innerHTML = '<div class="empty-state">Nenhuma sugestão registrada ainda.</div>';
-                return;
-            }
-
-            sugestoes.forEach(s => {
-                const card = document.createElement('div');
-                card.className = 'suggestion-card shadow-sm';
-                card.innerHTML = `
-                    <div class="suggestion-setor">📍 ${s.setor || 'Setor não informado'}</div>
-                    <div class="suggestion-text">${s.texto || 'Texto não disponível'}</div>
-                    <div class="suggestion-date">${s.data || ''}</div>
-                `;
-                container.appendChild(card);
-            });
-        })
-        .catch(err => {
-            console.error('Erro ao carregar sugestões:', err);
-            container.innerHTML =
-                '<div class="alert alert-danger text-center">Erro ao carregar as sugestões. Por favor, tente novamente.</div>';
-        });
-}
 
 let resizeTimeout;
 window.addEventListener('resize', () => {
