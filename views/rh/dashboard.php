@@ -135,7 +135,7 @@
                 <label for="categoria" class="form-label">Categoria</label>
                 <select id="categoria" class="form-select">
                     <option value="">Todas</option>
-                    <option>Melhoria contínuas e processos</option>
+                    <option>Melhoria contínua e processos</option>
                     <option>Ambiente e condições de trabalho</option>
                     <option>Reconhecimento e valorização</option>
                     <option>Liderança e gestão</option>
@@ -143,7 +143,6 @@
                     <option>Relações interpessoais e trabalho em equipe</option>
                     <option>Desenvolvimento e crescimento</option>
                     <option>Comprometimento e pertencimento</option>
-                    <option>Benefícios</option>
                 </select>
             </div>
 
@@ -295,7 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const concordoTotal = 
                     (totaisGerais["Concordo Totalmente"] || 0) +
-                    (totaisGerais["Concordo Parcialmente"] || 0);
+                    (totaisGerais["Concordo Parcialmente"] || 0) +
+                    (totaisGerais["Nem Concordo Nem Discordo"] || 0);
 
                 const discordoTotal = 
                     (totaisGerais["Discordo Totalmente"] || 0) +
