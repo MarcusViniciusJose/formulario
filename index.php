@@ -72,9 +72,6 @@ switch ($page) {
             case 'index':
                 $controller->index();
                 break;
-            case 'filtrar':
-                $controller->filtrar();
-                break;
             default:
                 $controller->index();
                 break;

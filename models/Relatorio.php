@@ -8,18 +8,13 @@ class Relatorio {
         $this->db = Database::conn();
     }
 
-    public function buscarRespostas($categoria = '', $setor = '') {
+    public function buscarRespostas($categoria = '') {
         $where = [];
         $params = [];
 
         if ($categoria !== '') {
             $where[] = "c.nome = ?";
             $params[] = $categoria;
-        }
-
-        if ($setor !== '') {
-            $where[] = "s.nome = ?";
-            $params[] = $setor;
         }
 
         $sqlWhere = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -32,7 +27,6 @@ class Relatorio {
             FROM respostas r
             JOIN perguntas p ON p.id = r.pergunta_id
             JOIN categorias c ON c.id = p.categoria_id
-            JOIN setores s ON s.id = r.setor_id
             $sqlWhere
             GROUP BY p.texto, r.resposta
             ORDER BY c.nome, p.texto
@@ -42,12 +36,12 @@ class Relatorio {
         $stmt->execute($params);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-       
         $dados = [];
         foreach ($result as $linha) {
+
             $pergunta = $linha['pergunta'];
             $resposta = $linha['resposta'];
-            $total = (int)$linha['total'];
+            $total = (int) $linha['total'];
 
             if (!isset($dados[$pergunta])) {
                 $dados[$pergunta] = [
@@ -62,6 +56,7 @@ class Relatorio {
                 ];
             }
 
+            // Atribui contagem da resposta
             $dados[$pergunta]['respostas'][$resposta] = $total;
         }
 

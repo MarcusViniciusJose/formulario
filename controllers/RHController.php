@@ -2,54 +2,55 @@
 require_once __DIR__ . '/../models/Relatorio.php';
 
 class RHController {
+
     public function index() {
         require __DIR__ . '/../views/rh/dashboard.php';
     }
 
     public function dadosGraficos() {
         header('Content-Type: application/json');
+
         $categoria = $_GET['categoria'] ?? '';
-        $setor = $_GET['setor'] ?? '';
 
         $relatorio = new Relatorio();
-        $dados = $relatorio->buscarRespostas($categoria, $setor);
+
+        $dados = $relatorio->buscarRespostas($categoria);
 
         echo json_encode($dados, JSON_UNESCAPED_UNICODE);
     }
 
     public function insatisfeitas() {
-    require_once 'models/Relatorio.php';
-    $pesquisa = new Relatorio();
-    
-    $dados = $pesquisa->buscarRespostas();
+        require_once __DIR__ . '/../models/Relatorio.php';
 
-    $resultados = [];
+        $pesquisa = new Relatorio();
+        $dados = $pesquisa->buscarRespostas();
 
-    foreach ($dados as $item) {
-        $respostas = $item['respostas'];
-        $total = array_sum($respostas);
+        $resultados = [];
 
-        if ($total > 0) {
-            $insatisfacao = (
-                ($respostas['Discordo Totalmente'] ?? 0) +
-                ($respostas['Discordo Parcialmente'] ?? 0)
-            );
+        foreach ($dados as $item) {
 
-            $pct = ($insatisfacao / $total) * 100;
+            $respostas = $item['respostas'];
+            $total = array_sum($respostas);
 
-            if ($pct > 35) {
-                $resultados[] = [
-                    'pergunta' => $item['pergunta'],
-                    'insatisfacao' => round($pct, 1),
-                    'total' => $total
-                ];
+            if ($total > 0) {
+
+                $insatisfacao = (
+                    ($respostas['Discordo Totalmente'] ?? 0) +
+                    ($respostas['Discordo Parcialmente'] ?? 0)
+                );
+
+                $pct = ($insatisfacao / $total) * 100;
+
+                if ($pct > 35) {
+                    $resultados[] = [
+                        'pergunta' => $item['pergunta'],
+                        'insatisfacao' => round($pct, 1),
+                        'total' => $total
+                    ];
+                }
             }
         }
+
+        include __DIR__ . '/../views/rh/insatisfacao.php';
     }
-
-    include __DIR__ . '/../views/rh/insatisfacao.php';
-}
-
-
-    
 }

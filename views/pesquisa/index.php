@@ -115,47 +115,41 @@
 
             <form method="POST" action="?page=pesquisa&action=confirmar">
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Selecione seu setor:</label>
-                    <select name="setor_id" class="form-select form-select-lg shadow-sm" required>
-                        <option value="">-- Escolha seu setor --</option>
-                        <?php foreach ($setores as $setor): ?>
-                            <option value="<?= $setor['id'] ?>"><?= htmlspecialchars($setor['nome']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <?php $numPergunta = 1; ?>
-                <?php foreach ($categorias as $categoria): ?>
-                    <div class="card my-4 border-0">
-                        <div class="card-header">
-                            <?= htmlspecialchars($categoria['nome']) ?>
-                        </div>
-                        <div class="card-body p-3">
-                            <?php foreach ($perguntas[$categoria['id']] as $pergunta): ?>
-                                <div class="question-block">
-                                    <label class="question-label">
-                                        <?= $numPergunta++ ?>. <?= htmlspecialchars($pergunta['texto']) ?>
-                                    </label>
-                                    <div class="option-group">
-                                        <?php
-                                        $opcoes = [
-                                            'Discordo Totalmente',
-                                            'Discordo Parcialmente',
-                                            'Nem Concordo Nem Discordo',
-                                            'Concordo Parcialmente',
-                                            'Concordo Totalmente'
-                                        ];
-                                        foreach ($opcoes as $opcao):
-                                        ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="respostas[<?= $pergunta['id'] ?>]"
-                                                    value="<?= $opcao ?>" required>
-                                                <label class="form-check-label"><?= $opcao ?></label>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
+                <?php
+                $todasPerguntas = [];
+                foreach ($categorias as $categoria) {
+                    if (isset($perguntas[$categoria['id']])) {
+                        foreach ($perguntas[$categoria['id']] as $pergunta) {
+                            $todasPerguntas[] = $pergunta;
+                        }
+                    }
+                }
+                
+                shuffle($todasPerguntas);
+                
+                $numPergunta = 1;
+                foreach ($todasPerguntas as $pergunta):
+                ?>
+                    <div class="question-block">
+                        <label class="question-label">
+                            <?= $numPergunta++ ?>. <?= htmlspecialchars($pergunta['texto']) ?>
+                        </label>
+                        <div class="option-group">
+                            <?php
+                            $opcoes = [
+                                'Discordo Totalmente',
+                                'Discordo Parcialmente',
+                                'Nem Concordo Nem Discordo',
+                                'Concordo Parcialmente',
+                                'Concordo Totalmente'
+                            ];
+                            foreach ($opcoes as $opcao):
+                            ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"
+                                        name="respostas[<?= $pergunta['id'] ?>]"
+                                        value="<?= $opcao ?>" required>
+                                    <label class="form-check-label"><?= $opcao ?></label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -163,9 +157,7 @@
                 <?php endforeach; ?>
 
                 <div class="card my-4 border-0">
-                    <div class="card-header  text-white text-center">
-                        Sugestões de Melhorias
-                    </div>
+                    
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="sugestao" class="form-label fw-bold">
@@ -176,7 +168,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <button type="submit" class="btn btn-success mt-3">Enviar Respostas</button>
 

@@ -131,7 +131,7 @@
 
     <div class="card filter-card shadow-sm border-0">
         <div class="row g-3">
-            <div class="col-12 col-sm-6 col-lg-5">
+            <div class="col-12 col-sm-6 col-lg-10">
                 <label for="categoria" class="form-label">Categoria</label>
                 <select id="categoria" class="form-select">
                     <option value="">Todas</option>
@@ -147,17 +147,7 @@
                 </select>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-5">
-                <label for="setor" class="form-label">Setor</label>
-                <select id="setor" class="form-select">
-                    <option value="">Todos</option>
-                    <option>Administrativo</option>
-                    <option>Produção</option>
-                    <option>Manutenção</option>
-                    <option>Controle de Qualidade</option>
-                    <option>Logística</option>
-                </select>
-            </div>
+           
 
             <div class="col-12 col-lg-2 d-flex align-items-end">
                 <button id="filtrar" class="btn btn-primary w-100">Filtrar</button>
@@ -190,12 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('filtrar').addEventListener('click', () => {
         const categoria = document.getElementById('categoria').value;
-        const setor = document.getElementById('setor').value;
 
         const areaGraficos = document.getElementById('areaGraficos');
         areaGraficos.innerHTML = '<div class="loading-state">Carregando dados...</div>';
 
-        fetch(`index.php?page=rh&action=dadosGraficos&categoria=${encodeURIComponent(categoria)}&setor=${encodeURIComponent(setor)}`)
+        fetch(`index.php?page=rh&action=dadosGraficos&categoria=${encodeURIComponent(categoria)}`)
             .then(res => {
                 if (!res.ok) throw new Error('Erro na resposta do servidor');
                 return res.json();
