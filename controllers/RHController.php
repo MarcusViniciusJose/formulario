@@ -34,12 +34,21 @@ class RHController {
 
             if ($total > 0) {
 
+                $satisfacao = (
+                    ($respostas['Concordo Totalmente'] ?? 0) +
+                    ($respostas['Concordo Parcialmente'] ?? 0) +
+                    ($respostas['Nem Concordo Nem Discordo'] ?? 0)
+                );
+
                 $insatisfacao = (
                     ($respostas['Discordo Totalmente'] ?? 0) +
                     ($respostas['Discordo Parcialmente'] ?? 0)
                 );
 
-                $pct = ($insatisfacao / $total) * 100;
+
+                $resp =  $insatisfacao - $satisfacao;
+
+                $pct = ($resp / $total) * 100;
 
                 if ($pct > 35) {
                     $resultados[] = [
