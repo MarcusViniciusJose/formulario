@@ -72,6 +72,12 @@ switch ($page) {
             case 'index':
                 $controller->index();
                 break;
+            case 'wordcloud':
+                $controller->wordcloud();
+                break;
+            case 'salvarPlano':
+                $controller->salvarPlano();
+                break;
             default:
                 $controller->index();
                 break;

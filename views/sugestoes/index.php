@@ -31,6 +31,13 @@
         <a href="?page=rh" class="btn btn-secondary">Voltar ao dashboard</a>
     </div>
 
+    <div class="text-center mt-4">
+        <a href="index.php?page=sugestoes&action=wordcloud" class="btn btn-primary">
+            ☁️ Ver Nuvem de Palavras
+        </a>
+    </div>
+
+
 </div>
 
 </body>
