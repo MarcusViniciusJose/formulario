@@ -57,7 +57,7 @@ class SugestaoController {
                 'what' => $dados['what'],
                 'why' => $dados['why'],
                 'where' => $dados['where'] ?? '',
-                'when' => $dados['when'] ?? '',
+                'when_date'  => $dados['when_date'] ?? null,
                 'who' => $dados['who'],
                 'how' => $dados['how'] ?? '',
                 'howMuch' => $dados['howMuch'] ?? ''
@@ -77,4 +77,63 @@ class SugestaoController {
             ]);
         }
     }
+
+    public function atualizarPlano() {
+        header('Content-Type: application/json');
+
+        try {
+            $dados = json_decode(file_get_contents('php://input'), true);
+
+            if (!$dados || empty($dados['palavra'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Dados inválidos'
+                ]);
+                return;
+            }
+
+            $this->model->atualizarPlano($dados);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Plano atualizado com sucesso'
+            ]);
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+}
+
+    public function excluirPlano() {
+        header('Content-Type: application/json');
+
+        try {
+            $dados = json_decode(file_get_contents('php://input'), true);
+
+            if (empty($dados['palavra'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Palavra não informada'
+                ]);
+                return;
+            }
+
+            $this->model->excluirPlano($dados['palavra']);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Plano excluído com sucesso'
+            ]);
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
 }

@@ -78,6 +78,12 @@ switch ($page) {
             case 'salvarPlano':
                 $controller->salvarPlano();
                 break;
+            case 'excluirPlano':
+                $controller->excluirPlano();
+                break;
+            case 'atualizarPlano':
+                $controller->atualizarPlano();
+                break;
             default:
                 $controller->index();
                 break;

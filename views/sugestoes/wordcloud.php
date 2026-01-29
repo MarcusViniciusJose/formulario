@@ -648,6 +648,10 @@
                 <button type="button" class="btn-modal btn-save" onclick="salvarPlano()">
                     💾 Salvar Plano de Ação
                 </button>
+                <button type="button" class="btn-modal btn-cancel"onclick="excluirPlano()">
+                    🗑️ Excluir Plano
+                </button>
+
             </div>
         </div>
     </div>
@@ -660,27 +664,26 @@ const sugestoes = <?= json_encode($sugestoes ?? [], JSON_UNESCAPED_UNICODE) ?>;
 const planosDB  = <?= json_encode($planos ?? [], JSON_UNESCAPED_UNICODE) ?>;
 
 const categorias = { 
-    "Área de descanso": ["descanso", "área de descanso", "pausa", "intervalo"], 
     "Grupo de melhoria contínua": ["grupo"], 
     "Comunicação interna": ["comunicação", "informação", "alinhamento", "feedback"], 
     "Cargos e Salários": ["salário", "cargo", "plano de carreira", "remuneração", "salario"], 
     "Ergonomia": ["ergonomia", "cadeira", "postura", "conforto"], 
-    "Convênio médico": ["convênio", "plano de saúde", "médico", "Unimed", "saude", "convenio", "medico",], 
+    "Convênio médico": ["convênio", "plano de saúde", "médico", "Unimed", "saude", "convenio", "medico", "unimed"], 
     "Vale alimentação": ["vale alimentação", "refeição", "VR", "VA"], 
     "Feedbacks": ["feedback", "retorno", "avaliação"], 
     "Uniforme completo": ["uniforme", "epi", "roupa"], 
     "Gympass": ["gympass", "academia", "exercício", "gynpass", "gym"], 
-    "Infraestrutura": ["infraestrutura", "estrutura", "equipamento", "máquina", "descanso", "banheiro"], 
+    "Infraestrutura": ["infraestrutura", "estrutura", "equipamento", "máquina", "descanso", "banheiro", "descanso"], 
     "Treinamentos": ["treinamento", "curso", "capacitação"] 
 };
 
 const planosMap = {};
 planosDB.forEach(p => planosMap[p.palavra] = p);
 
-const width  = 950;
+const width  = 980;
 const height = 650;
 let palavrasList = [];
-let palavraAtual = "";
+
 
 function gerarPalavras(textos) {
     const resultado = [];
@@ -726,6 +729,8 @@ function renderizarNuvem() {
         .rotate(() => 0)
         .font("Arial")
         .fontSize(d => d.size)
+        .random(() => 0.49)   
+        .spiral("rectangular") 
         .on("end", desenhar)
         .start();
 }
@@ -770,36 +775,46 @@ function abrirPlano(palavra) {
 
     if (planosMap[palavra]) {
         const p = planosMap[palavra];
-        what.value     = p.what || "";
-        why.value      = p.why || "";
-        where.value    = p.where || "";
-        when.value     = p.when || "";
-        who.value      = p.who || "";
-        how.value      = p.how || "";
-        howMuch.value = p.how_much || "";
+        
+        document.getElementById('what').value = p.what || "";
+        document.getElementById('why').value = p.why || "";
+        document.getElementById('where').value = p.where || "";
+        document.getElementById('when').value = p.when_date || ""; 
+        document.getElementById('who').value = p.who || "";
+        document.getElementById('how').value = p.how || "";
+        document.getElementById('howMuch').value = p.how_much || "";
     }
+
+    const btnExcluir = document.querySelector(".btn-cancel");
+    btnExcluir.style.display = planosMap[palavra] ? "inline-block" : "none";
 
     new bootstrap.Modal(document.getElementById("modal5w2h")).show();
 }
 
+
+
 function salvarPlano() {
     const plano = {
         palavra: palavraAtual,
-        what: what.value.trim(),
-        why: why.value.trim(),
-        where: where.value.trim(),
-        when: when.value,
-        who: who.value.trim(),
-        how: how.value.trim(),
-        howMuch: howMuch.value.trim()
+        what: document.getElementById('what').value.trim(),
+        why: document.getElementById('why').value.trim(),
+        where: document.getElementById('where').value.trim(),
+        when_date: document.getElementById('when').value || null,  
+        who: document.getElementById('who').value.trim(),
+        how: document.getElementById('how').value.trim(),
+        howMuch: document.getElementById('howMuch').value.trim()
     };
+
 
     if (!plano.what || !plano.why || !plano.who) {
         mostrarAlerta("Preencha WHAT, WHY e WHO", "warning");
         return;
     }
 
-    fetch("?page=sugestoes&action=salvarPlano", {
+    const existe = !!planosMap[palavraAtual];
+    const action = existe ? "atualizarPlano" : "salvarPlano";
+
+    fetch(`?page=sugestoes&action=${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(plano)
@@ -807,13 +822,39 @@ function salvarPlano() {
     .then(r => r.json())
     .then(res => {
         if (res.success) {
-            mostrarAlerta("Plano salvo com sucesso", "success");
+            mostrarAlerta(res.message, "success");
             setTimeout(() => location.reload(), 1200);
+        } else {
+            mostrarAlerta(res.message, "danger");
+        }
+    })
+    .catch(err => {
+        console.error("Erro na requisição:", err);
+        mostrarAlerta("Erro ao comunicar com o servidor", "danger");
+    });
+}
+
+function excluirPlano() {
+    if (!palavraAtual) return;
+
+    if (!confirm("Deseja realmente excluir este plano?")) return;
+
+    fetch("?page=sugestoes&action=excluirPlano", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ palavra: palavraAtual })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            mostrarAlerta("Plano excluído", "success");
+            setTimeout(() => location.reload(), 1000);
         } else {
             mostrarAlerta(res.message, "danger");
         }
     });
 }
+
 
 function exportarPlanos() {
     if (!Object.keys(planosMap).length) {
@@ -831,7 +872,7 @@ function exportarPlanos() {
         p.what,
         p.why,
         p.where,
-        p.when || "-",
+        p.when_date || "-",
         p.who,
         p.how,
         p.how_much || "-"
