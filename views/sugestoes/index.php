@@ -10,6 +10,8 @@
 
 <div class="container py-4 px-3">
 
+    
+
     <h2 class="text-center mb-4">📬 Sugestões de Melhoria</h2>
 
     <?php if (empty($sugestoes)): ?>
@@ -27,16 +29,17 @@
         </div>
     <?php endif; ?>
 
-    <div class="text-center mt-4">
-        <a href="?page=rh" class="btn btn-secondary">Voltar ao dashboard</a>
-    </div>
-
-    <div class="text-center mt-4">
+       <div class="text-center  mt-4 d-flex flex-column">
         <a href="index.php?page=sugestoes&action=wordcloud" class="btn btn-primary">
             ☁️ Ver Nuvem de Palavras
         </a>
     </div>
+    
+    <div class="text-center mt-4 d-flex flex-column">
+        <a href="?page=rh" class="btn btn-secondary">Voltar ao dashboard</a>
+    </div>
 
+ 
 
 </div>
 

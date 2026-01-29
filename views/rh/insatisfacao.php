@@ -55,7 +55,7 @@
         </div>
     <?php endforeach; ?>
 
-    <div class="text-center mt-4">
+    <div class="text-center mt-4 d-flex flex-column">
         <a href="index.php?page=rh" class="btn btn-primary px-4">
             ⬅ Voltar ao painel
         </a>
